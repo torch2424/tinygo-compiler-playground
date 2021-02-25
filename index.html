@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>title</title>
+  </head>
+  <body>
+    Check the JavaScript Console :)
+
+    <script>
+      
+      const importObject = {
+        wasi_unstable: {
+          fd_write: function() {
+            console.log('wasi_unstable fd_write called!', [...arguments]);
+          }
+        },
+        fastly_http_body: {
+          write: function() {
+            console.log('fastly_http_body write called!', [...arguments]);
+          }
+        } 
+      };
+
+      fetch('main.wasm').then(response =>
+        response.arrayBuffer()
+      ).then(bytes =>
+        WebAssembly.instantiate(bytes, importObject)
+      ).then(result =>
+        result.instance.exports._start()
+      );
+    
+    </script>
+  </body>
+</html>
